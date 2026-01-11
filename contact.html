@@ -217,30 +217,36 @@
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
 
-  const form = document.getElementById("contactForm");
+  const submitBtn = document.getElementById("submitBtn");
   const phoneInput = document.getElementById("phone");
 
-  /* ===== SUPABASE INIT ===== */
+  /* =====================
+     SUPABASE INIT
+  ===================== */
   const supabase = supabaseJs.createClient(
     "https://gppgbnujpdcudqovsjyo.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwcGdibnVqcGRjdWRxb3ZzanlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgwMzIwNTksImV4cCI6MjA4MzYwODA1OX0.H9Z13wmdb1gN6Z6dit3jnoadFxQ1DSyIRv1PoWVA9h0"
   );
 
-  /* ===== GEO COUNTRY DETECTION ===== */
-  let userCountry = "ae";
+  /* =====================
+     GEO COUNTRY DETECTION
+  ===================== */
+  let country = "ae";
   try {
     const res = await fetch("https://ipapi.co/json/");
     const data = await res.json();
-    if (data && data.country_code) {
-      userCountry = data.country_code.toLowerCase();
+    if (data.country_code) {
+      country = data.country_code.toLowerCase();
     }
-  } catch {
-    userCountry = "ae";
+  } catch (e) {
+    country = "ae";
   }
 
-  /* ===== PHONE INPUT ===== */
+  /* =====================
+     PHONE INPUT
+  ===================== */
   const iti = window.intlTelInput(phoneInput, {
-    initialCountry: userCountry,
+    initialCountry: country,
     separateDialCode: true,
     nationalMode: false,
     preferredCountries: ["ae", "in", "gb", "us"],
@@ -248,36 +254,51 @@ document.addEventListener("DOMContentLoaded", async () => {
       "https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"
   });
 
-  /* ===== FORM SUBMIT ===== */
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault(); // 🚫 STOP PAGE RELOAD
+  /* =====================
+     BUTTON CLICK (NO FORM SUBMIT)
+  ===================== */
+  submitBtn.addEventListener("click", async () => {
 
-    if (!iti.isValidNumber()) {
-      alert("Please enter a valid phone number");
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const service = document.getElementById("service").value;
+    const message = document.getElementById("message").value.trim();
+
+    if (!name || !email || !service || !message) {
+      alert("❌ Please fill all fields");
       return;
     }
 
-    const payload = {
-      name: document.getElementById("name").value.trim(),
-      email: document.getElementById("email").value.trim(),
-      phone: iti.getNumber(),
-      service: document.getElementById("service").value,
-      message: document.getElementById("message").value.trim()
-    };
+    if (!iti.isValidNumber()) {
+      alert("❌ Enter a valid phone number");
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Submitting...";
 
     const { error } = await supabase
       .from("contact_leads")
-      .insert([payload]);
+      .insert([{
+        name,
+        email,
+        phone: iti.getNumber(),
+        service,
+        message
+      }]);
+
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Book Appointment";
 
     if (error) {
       console.error(error);
-      alert("Submission failed. Please try again.");
+      alert("❌ Submission failed. Try again.");
       return;
     }
 
     alert("✅ Appointment booked successfully!");
-    form.reset();
-    iti.setCountry(userCountry);
+    document.getElementById("contactForm").reset();
+    iti.setCountry(country);
   });
 
 });
