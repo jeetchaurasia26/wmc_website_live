@@ -152,167 +152,133 @@
 
         <!-- CONTACT FORM -->
         <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.5s">
-          <form id="contactForm">
+<form id="contactForm">
+  <div class="row g-3">
 
-            <div class="row g-3">
+    <div class="col-md-6">
+      <div class="form-floating">
+        <input type="text" class="form-control" id="name" required>
+        <label>Your Name</label>
+      </div>
+    </div>
 
-              <div class="col-md-6">
-                <div class="form-floating">
-                  <input type="text" class="form-control" id="name" required>
-                  <label>Your Name</label>
-                </div>
-              </div>
+    <div class="col-md-6">
+      <div class="form-floating">
+        <input type="email" class="form-control" id="email" required>
+        <label>Your Email</label>
+      </div>
+    </div>
 
-              <div class="col-md-6">
-                <div class="form-floating">
-                  <input type="email" class="form-control" id="email" required>
-                  <label>Your Email</label>
-                </div>
-              </div>
+    <div class="col-12">
+      <input type="tel" id="phone" class="form-control" placeholder="Phone Number" required>
+    </div>
 
-              <div class="col-12">
-                <!-- IMPORTANT: no bg-secondary here -->
-                <input type="tel" id="phone" class="form-control iti-input" placeholder="Phone Number" required>
+    <div class="col-12">
+      <div class="form-floating">
+        <select class="form-control" id="service" required>
+          <option value="">Select a Service</option>
+          <option>Aesthetic Treatments</option>
+          <option>General Practitioner</option>
+          <option>Pediatrics</option>
+          <option>Urology Services</option>
+        </select>
+        <label>Service</label>
+      </div>
+    </div>
 
-              </div>
+    <div class="col-12">
+      <div class="form-floating">
+        <textarea class="form-control" id="message" style="height:150px" required></textarea>
+        <label>Message</label>
+      </div>
+    </div>
 
-              <div class="col-12">
-                <div class="form-floating">
-                  <select class="form-control" id="service" required>
-                    <option value="">Select a Service</option>
-                    <option>Laser Hair Removal</option>
-                    <option>Body Sculpting</option>
-                    <option>Cosmetic Treatments</option>
-                    <option>General Practitioner</option>
-                    <option>Pediatrics</option>
-                    <option>Urology Services</option>
-                  </select>
-                  <label>Service</label>
-                </div>
-              </div>
+    <div class="col-12">
+      <button type="submit" class="btn btn-outline-primary border-2 w-100 py-3">
+        Book Appointment
+      </button>
+    </div>
 
-              <div class="col-12">
-                <div class="form-floating">
-                  <textarea class="form-control" id="message" style="height:150px" required></textarea>
-                  <label>Message</label>
-                </div>
-              </div>
-
-              <div class="col-12">
-                <button class="btn btn-outline-primary border-2 w-100 py-3" type="submit">
-                  Book Appointment
-                </button>
-              </div>
-
-            </div>
-          </form>
+  </div>
+</form>
         </div>
 
       </div>
     </div>
   </div>
   <!-- Contact End -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/css/intlTelInput.css">
 
-  <!-- intl-tel-input CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/css/intlTelInput.css" />
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/intlTelInput.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- intl-tel-input JS -->
-  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/intlTelInput.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"></script>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
   const form = document.getElementById("contactForm");
-  if (!form) return;
+  const phoneInput = document.getElementById("phone");
 
-  /* =====================
-     SUPABASE
-  ===================== */
+  /* ===== SUPABASE INIT ===== */
   const supabase = supabaseJs.createClient(
     "https://gppgbnujpdcudqovsjyo.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwcGdibnVqcGRjdWRxb3ZzanlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgwMzIwNTksImV4cCI6MjA4MzYwODA1OX0.H9Z13wmdb1gN6Z6dit3jnoadFxQ1DSyIRv1PoWVA9h0"
   );
 
-  /* =====================
-     PHONE INPUT - GEOLOCATION
-  ===================== */
-  const phoneInput = document.getElementById("phone");
-  let userCountry = "AE"; // Default to UAE
-
-  // Fetch user country from IP
-  fetch("https://ipapi.co/json/")
-    .then(res => res.json())
-    .then(data => {
-      userCountry = data.country_code || "AE";
-      console.log("Detected country:", userCountry);
-    })
-    .catch(err => {
-      console.log("Geolocation error, using default:", err);
-      userCountry = "AE";
-    })
-    .finally(() => {
-      // Initialize intl-tel-input AFTER country is determined
-      initializePhoneInput();
-    });
-
-  function initializePhoneInput() {
-    const iti = window.intlTelInput(phoneInput, {
-      initialCountry: userCountry.toLowerCase(),
-      separateDialCode: true,
-      nationalMode: false,
-      preferredCountries: ["ae", "in", "gb", "us"],
-      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"
-    });
-
-    /* =====================
-       FORM SUBMIT
-    ===================== */
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      // Validate phone
-      if (!iti.isValidNumber()) {
-        alert("❌ Please enter a valid phone number.");
-        return;
-      }
-
-      const payload = {
-        name: document.getElementById("name").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        phone: iti.getNumber(),
-        service: document.getElementById("service").value,
-        message: document.getElementById("message").value.trim()
-      };
-
-      // Validate required fields
-      if (!payload.name || !payload.email || !payload.phone || !payload.service || !payload.message) {
-        alert("❌ Please fill in all required fields.");
-        return;
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from("contact_leads")
-          .insert([payload]);
-
-        if (error) {
-          console.error("Supabase error:", error);
-          alert("❌ Submission failed: " + error.message);
-          return;
-        }
-
-        alert("✅ Appointment booked successfully! We'll contact you soon.");
-        form.reset();
-        iti.setCountry(userCountry.toLowerCase());
-      } catch (err) {
-        console.error("Unexpected error:", err);
-        alert("❌ An unexpected error occurred. Please try again.");
-      }
-    });
+  /* ===== GEO COUNTRY DETECTION ===== */
+  let userCountry = "ae";
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+    if (data && data.country_code) {
+      userCountry = data.country_code.toLowerCase();
+    }
+  } catch {
+    userCountry = "ae";
   }
+
+  /* ===== PHONE INPUT ===== */
+  const iti = window.intlTelInput(phoneInput, {
+    initialCountry: userCountry,
+    separateDialCode: true,
+    nationalMode: false,
+    preferredCountries: ["ae", "in", "gb", "us"],
+    utilsScript:
+      "https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"
+  });
+
+  /* ===== FORM SUBMIT ===== */
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault(); // 🚫 STOP PAGE RELOAD
+
+    if (!iti.isValidNumber()) {
+      alert("Please enter a valid phone number");
+      return;
+    }
+
+    const payload = {
+      name: document.getElementById("name").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      phone: iti.getNumber(),
+      service: document.getElementById("service").value,
+      message: document.getElementById("message").value.trim()
+    };
+
+    const { error } = await supabase
+      .from("contact_leads")
+      .insert([payload]);
+
+    if (error) {
+      console.error(error);
+      alert("Submission failed. Please try again.");
+      return;
+    }
+
+    alert("✅ Appointment booked successfully!");
+    form.reset();
+    iti.setCountry(userCountry);
+  });
 
 });
 </script>
