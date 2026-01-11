@@ -248,29 +248,6 @@
           "https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"
       });
 
-      document.getElementById("contactForm").addEventListener("submit", async function (e) {
-        e.preventDefault();
-
-        const phoneNumber = iti.getNumber(); // FULL intl number
-
-        const { error } = await supabase
-          .from("contact_leads")
-          .insert([{
-            name: document.getElementById("name").value,
-            email: document.getElementById("email").value,
-            phone: phoneNumber,
-            service: document.getElementById("service").value,
-            message: document.getElementById("message").value
-          }]);
-
-        if (error) {
-          alert("Something went wrong. Please try again.");
-          console.error(error);
-        } else {
-          alert("Thank you! Your appointment request has been submitted.");
-          this.reset();
-        }
-      });
 
     });
   </script>
@@ -280,47 +257,54 @@
      SUPABASE
 ========================= -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
 
-  /* ===== SUPABASE INIT ===== */
+  /* =====================
+     SUPABASE
+  ===================== */
   const supabase = supabaseJs.createClient(
     "https://gppgbnujpdcudqovsjyo.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwcGdibnVqcGRjdWRxb3ZzanlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgwMzIwNTksImV4cCI6MjA4MzYwODA1OX0.H9Z13wmdb1gN6Z6dit3jnoadFxQ1DSyIRv1PoWVA9h0"
   );
 
-  /* ===== PHONE INPUT ===== */
-  const phoneInput = document.querySelector("#phone");
+  /* =====================
+     PHONE INPUT
+  ===================== */
+  const phoneInput = document.getElementById("phone");
 
   const iti = window.intlTelInput(phoneInput, {
     initialCountry: "auto",
     separateDialCode: true,
     nationalMode: false,
     preferredCountries: ["ae", "in", "gb", "us"],
-    geoIpLookup: function (callback) {
+    geoIpLookup: callback => {
       fetch("https://ipapi.co/json/")
-        .then(res => res.json())
-        .then(data => callback(data.country_code))
+        .then(r => r.json())
+        .then(d => callback(d.country_code))
         .catch(() => callback("AE"));
     },
     utilsScript:
       "https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"
   });
 
-  /* ===== FORM SUBMIT ===== */
-  document.getElementById("contactForm").addEventListener("submit", async function (e) {
+  /* =====================
+     FORM SUBMIT
+  ===================== */
+  document.getElementById("contactForm").addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    const payload = {
+      name: document.getElementById("name").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      phone: iti.getNumber(),
+      service: document.getElementById("service").value,
+      message: document.getElementById("message").value.trim()
+    };
 
     const { error } = await supabase
       .from("contact_leads")
-      .insert([{
-        name: document.getElementById("name").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        phone: iti.getNumber(),
-        service: document.getElementById("service").value,
-        message: document.getElementById("message").value.trim()
-      }]);
+      .insert([payload]);
 
     if (error) {
       console.error(error);
@@ -328,8 +312,8 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    alert("✅ Appointment request submitted successfully!");
-    this.reset();
+    alert("✅ Appointment booked successfully!");
+    e.target.reset();
     iti.setCountry("ae");
   });
 
