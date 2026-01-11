@@ -42,16 +42,6 @@
 </head>
 
 <body>
-  <!-- Spinner Start -->
-  <div id="spinner"
-    class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-    <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
-      <span class="sr-only">Loading...</span>
-    </div>
-  </div>
-  <!-- Spinner End -->
-
-
   <!-- Header Start -->
   <div class="container-fluid p-0">
     <nav class="navbar navbar-expand-lg navbar-dark px-lg-5">
@@ -286,59 +276,65 @@
   </script>
 
 
+<!-- =========================
+     SUPABASE
+========================= -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
+  /* ===== SUPABASE INIT ===== */
+  const supabase = supabaseJs.createClient(
+    "https://gppgbnujpdcudqovsjyo.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwcGdibnVqcGRjdWRxb3ZzanlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgwMzIwNTksImV4cCI6MjA4MzYwODA1OX0.H9Z13wmdb1gN6Z6dit3jnoadFxQ1DSyIRv1PoWVA9h0"
+  );
 
-      const supabase = supabaseJs.createClient(
-        "https://gppgbnujpdcudqovsjyo.supabase.co",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwcGdibnVqcGRjdWRxb3ZzanlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgwMzIwNTksImV4cCI6MjA4MzYwODA1OX0.H9Z13wmdb1gN6Z6dit3jnoadFxQ1DSyIRv1PoWVA9h0"
-      );
+  /* ===== PHONE INPUT ===== */
+  const phoneInput = document.querySelector("#phone");
 
-      const phoneInput = document.querySelector("#phone");
+  const iti = window.intlTelInput(phoneInput, {
+    initialCountry: "auto",
+    separateDialCode: true,
+    nationalMode: false,
+    preferredCountries: ["ae", "in", "gb", "us"],
+    geoIpLookup: function (callback) {
+      fetch("https://ipapi.co/json/")
+        .then(res => res.json())
+        .then(data => callback(data.country_code))
+        .catch(() => callback("AE"));
+    },
+    utilsScript:
+      "https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"
+  });
 
-      const iti = window.intlTelInput(phoneInput, {
-        initialCountry: "auto",
-        separateDialCode: true,
-        preferredCountries: ["ae", "in", "gb", "us"],
-        geoIpLookup: callback => {
-          fetch("https://ipapi.co/json/")
-            .then(res => res.json())
-            .then(data => callback(data.country_code))
-            .catch(() => callback("AE"));
-        },
-        utilsScript:
-          "https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"
-      });
+  /* ===== FORM SUBMIT ===== */
+  document.getElementById("contactForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-      document.getElementById("contactForm").addEventListener("submit", async function (e) {
-        e.preventDefault();
+    const { error } = await supabase
+      .from("contact_leads")
+      .insert([{
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: iti.getNumber(),
+        service: document.getElementById("service").value,
+        message: document.getElementById("message").value.trim()
+      }]);
 
-        const { error } = await supabase
-          .from("contact_leads")
-          .insert([{
-            name: document.getElementById("name").value,
-            email: document.getElementById("email").value,
-            phone: iti.getNumber(),
-            service: document.getElementById("service").value,
-            message: document.getElementById("message").value
-          }]);
+    if (error) {
+      console.error(error);
+      alert("❌ Submission failed. Please try again.");
+      return;
+    }
 
-        if (error) {
-          alert("Something went wrong. Please try again.");
-          console.error(error);
-        } else {
-          alert("Thank you! Your appointment request has been submitted.");
-          this.reset();
-        }
-      });
+    alert("✅ Appointment request submitted successfully!");
+    this.reset();
+    iti.setCountry("ae");
+  });
 
-    });
-  </script>
-
+});
+</script>
 
 
 
@@ -444,9 +440,9 @@
 
 
   <!-- Footer Start -->
-  <div class="container-fluid bg-dark text-light footer py-5 wow fadeIn" data-wow-delay="0.1s">
-    <div class="container py-5">
-      <div class="row g-5">
+  <div class="container-fluid bg-dark text-light footer py-3 py-lg-5 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container py-3 py-lg-5">
+      <div class="row g-3 g-lg-5">
 
         <!-- Logo and Description -->
         <div class="col-lg-3 col-md-6">
@@ -497,7 +493,7 @@
           <h5 class="text-primary mb-4">Contact Us</h5>
           <p class="mb-2">
             <i class="fa fa-map-marker-alt text-primary me-2"></i>
-            WMC Polyclinic LLC, 310 Garhoud Community, Near DXB International Airport T-1, Dubai - 29086, UAE
+            WMC Polyclinic LLC<br>310, 3rd Floor,<br>Garhoud Community, Dubai Autism Center,<br>Al Garhoud, Dubai (U.A.E.)
           </p>
           <p class="mb-2">
             <i class="fa fa-phone-alt text-primary me-2"></i>
@@ -518,14 +514,14 @@
 
     <!-- Copyright Bar -->
     <div class="container">
-      <div class="copyright">
+      <div class="copyright py-2 py-lg-3">
         <div class="row">
-          <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-            <p class="mb-0">&copy; 2026 WMC Polyclinic LLC</p>
+          <div class="col-12 col-md-6 text-center text-md-start mb-2 mb-md-0">
+            <p class="mb-0 fs-6">&copy; 2026 WMC Polyclinic LLC</p>
           </div>
-          <div class="col-md-6 text-center text-md-end">
-            <a href="#!" class="text-light me-3">Privacy Policy</a>
-            <a href="#!" class="text-light">Terms of Service</a>
+          <div class="col-12 col-md-6 text-center text-md-end">
+            <a href="#!" class="text-light me-2 me-md-3 text-decoration-none fs-6">Privacy Policy</a>
+            <a href="#!" class="text-light text-decoration-none fs-6">Terms of Service</a>
           </div>
         </div>
       </div>

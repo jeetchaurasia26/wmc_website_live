@@ -251,19 +251,6 @@
     display: inline-block;
 }
 
-.service-item .service-img::before {
-    position: absolute;
-    content: "";
-    width: calc(100% - 12rem);
-    height: calc(100% - 12rem);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border: 3rem solid rgba(0, 0, 0, .5);
-    border-radius: 300px;
-    z-index: 1;
-}
-
 .service-item.service-item-left {
     border-radius: 500px 0 0 500px;
     background: linear-gradient(to right, var(--bs-secondary), var(--bs-dark));
@@ -636,12 +623,6 @@ section p.text-muted {
         height: auto !important;
     }
 
-    .service-item .service-img::before {
-        width: calc(100% - 6rem) !important;
-        height: calc(100% - 6rem) !important;
-        border-width: 1.5rem !important;
-    }
-
     .service-item .service-text {
         padding: 1.5rem 1rem !important;
         text-align: center !important;
@@ -955,4 +936,92 @@ section p.text-muted {
     .footer .footer-logo {
         text-align: center;
     }
+}
+
+
+
+
+/* ==============================
+   FOOTER RESPONSIVE COMPACT FIX
+================================ */
+
+/* Reduce vertical padding */
+.footer {
+  padding-top: 3rem !important;
+  padding-bottom: 2rem !important;
+}
+
+/* Reduce inner container spacing */
+.footer .container {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Text tightening */
+.footer p {
+  margin-bottom: 0.6rem;
+  line-height: 1.5;
+  font-size: 0.9rem;
+}
+
+/* Section headings */
+.footer h5 {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+/* Footer links spacing */
+.footer .btn-link {
+  padding: 0.15rem 0;
+  font-size: 0.9rem;
+  display: block;
+}
+
+/* Social icons size */
+.footer .btn-sm-square {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Contact icons alignment */
+.footer i {
+  font-size: 0.9rem;
+}
+
+/* Copyright bar */
+.footer .copyright {
+  padding-top: 1rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ==============================
+   MOBILE OPTIMIZATION
+================================ */
+@media (max-width: 767px) {
+
+  .footer {
+    text-align: center;
+  }
+
+  .footer .row > div {
+    margin-bottom: 1.5rem;
+  }
+
+  .footer .d-flex {
+    justify-content: center;
+  }
+
+  .footer .btn-link {
+    text-align: center;
+  }
+
+  .footer .copyright .text-md-start,
+  .footer .copyright .text-md-end {
+    text-align: center !important;
+  }
 }
