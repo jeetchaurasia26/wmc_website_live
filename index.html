@@ -124,7 +124,7 @@ We blend state-of-the-art medical technology, with compassionate, patient-focuse
                                 <a href="service.html" class="btn btn-outline-primary border-2 py-3 w-100">View Our Services</a>
                             </div>
                             <div class="col-6">
-                            <a href="contact.html" class="btn btn-primary py-3 w-100">Book an Appointment</a>
+                            <a href="contact.html" class="btn btn-primary py-3 w-100" style="color: #000;">Book an Appointment</a>
                             </div>
                         </div>
                     </div>
@@ -259,7 +259,7 @@ We blend state-of-the-art medical technology, with compassionate, patient-focuse
         <div class="container py-3">
             <div class="row g-0 justify-content-center">
                 <div class="col-lg-7 text-center">
-                    <div class="title mx-5 px-5 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="title mx-2 mx-md-5 px-2 px-md-5 wow fadeInUp" data-wow-delay="0.1s">
                         <div class="title-center">
                             <h5>Appointments</h5>
                             <h1>Book Your Consultation Today</h1>
@@ -267,12 +267,117 @@ We blend state-of-the-art medical technology, with compassionate, patient-focuse
                     </div>
                     <p class="fs-5 mb-5 wow fadeInUp" data-wow-delay="0.2s">Schedule your consultation with our experienced medical specialists and
                     take the first step toward better health and wellbeing.</p>
-                    <div class="position-relative wow fadeInUp" data-wow-delay="0.3s">
-                        <input class="form-control border-0 bg-dark rounded-pill w-100 py-4 ps-4 pe-5" type="text"
-                            placeholder="Your phone number">
-                        <button type="button" class="btn btn-primary py-3 px-4 position-absolute top-0 end-0 me-2"
-                            style="margin-top: 7px;">Book Appointment</button>
-                    </div>
+                   <!-- Contact Form (centered & responsive) -->
+<section class="container">
+      <form id="contactForm">
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <input type="text" id="name" class="form-control" placeholder="Your Name" required>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <input type="email" id="email" class="form-control" placeholder="Your Email" required>
+          </div>
+
+          <!-- PHONE -->
+          <div class="col-12 col-md-6">
+            <div class="input-group">
+              <input type="text" id="countryCode" class="form-control" style="max-width:90px" readonly>
+              <input type="tel" id="phone" class="form-control" placeholder="Phone Number" required>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <select id="service" class="form-control" required>
+              <option value="">Select Service</option>
+              <option>Aesthetic Treatments</option>
+              <option>General Practitioner</option>
+              <option>Pediatrics</option>
+              <option>Urology Services</option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <textarea id="message" class="form-control" rows="5" placeholder="Your Message" required></textarea>
+          </div>
+
+          <!-- Hidden combined phone -->
+          <input type="hidden" id="full_phone">
+
+          <div class="col-12 d-grid">
+            <button type="submit" class="btn btn-outline-primary py-3">
+              Book Appointment
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+/* =========================
+   AUTO COUNTRY CODE (IP)
+========================= */
+fetch("https://ipapi.co/json/")
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("countryCode").value =
+      data.country_calling_code || "+971";
+  })
+  .catch(() => {
+    document.getElementById("countryCode").value = "+971";
+  });
+
+/* =========================
+   SUPABASE + FORM SUBMIT
+========================= */
+window.addEventListener("load", function () {
+
+  const form = document.getElementById("contactForm");
+  if (!form) return;
+
+  const supabase = window.supabase.createClient(
+    "https://gppgbnujpdcudqovsjyo.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwcGdibnVqcGRjdWRxb3ZzanlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgwMzIwNTksImV4cCI6MjA4MzYwODA1OX0.H9Z13wmdb1gN6Z6dit3jnoadFxQ1DSyIRv1PoWVA9h0"
+  );
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault(); // 🚨 CRITICAL
+
+    const fullPhone =
+      document.getElementById("countryCode").value +
+      document.getElementById("phone").value;
+
+    const payload = {
+      name: document.getElementById("name").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      phone: fullPhone,
+      service: document.getElementById("service").value,
+      message: document.getElementById("message").value.trim()
+    };
+
+    console.log("📦 Sending:", payload);
+
+    const { error } = await supabase
+      .from("contact_leads")
+      .insert([payload]);
+
+    if (error) {
+      console.error(error);
+      alert("❌ Submission failed");
+      return;
+    }
+
+    alert("✅ Appointment booked successfully!");
+    form.reset();
+  });
+
+});
+</script>
+
                 </div>
             </div>
         </div>
