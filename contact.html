@@ -154,31 +154,25 @@
 
 
 
-
 <script>
 (async () => {
 
-  /* =====================
-     SUPABASE INIT
-  ===================== */
+  console.log("Form script loaded");
+
   const supabase = supabaseJs.createClient(
     "https://gppgbnujpdcudqovsjyo.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwcGdibnVqcGRjdWRxb3ZzanlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgwMzIwNTksImV4cCI6MjA4MzYwODA1OX0.H9Z13wmdb1gN6Z6dit3jnoadFxQ1DSyIRv1PoWVA9h0"
   );
 
-  /* =====================
-     COUNTRY BY IP
-  ===================== */
+  /* ===== COUNTRY BY IP ===== */
   let country = "ae";
   try {
     const res = await fetch("https://ipapi.co/json/");
     const data = await res.json();
     if (data.country_code) country = data.country_code.toLowerCase();
-  } catch (e) {}
+  } catch {}
 
-  /* =====================
-     PHONE INPUT
-  ===================== */
+  /* ===== PHONE INPUT ===== */
   const phoneInput = document.getElementById("phone");
   const iti = window.intlTelInput(phoneInput, {
     initialCountry: country,
@@ -188,10 +182,9 @@
       "https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"
   });
 
-  /* =====================
-     SUBMIT BUTTON
-  ===================== */
+  /* ===== CLICK HANDLER ===== */
   document.getElementById("submitBtn").addEventListener("click", async () => {
+    console.log("Button clicked"); // 🔥 MUST APPEAR
 
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("email").value.trim();
@@ -225,10 +218,11 @@
     }
 
     alert("Appointment booked successfully!");
+
     document.getElementById("name").value = "";
     document.getElementById("email").value = "";
-    document.getElementById("message").value = "";
     document.getElementById("service").value = "";
+    document.getElementById("message").value = "";
     phoneInput.value = "";
     iti.setCountry(country);
   });
