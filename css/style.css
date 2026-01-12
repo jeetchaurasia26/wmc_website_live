@@ -1025,3 +1025,17 @@ section p.text-muted {
     text-align: center !important;
   }
 }
+
+
+
+#submitBtn {
+  position: relative;
+  z-index: 9999;
+  pointer-events: auto !important;
+}
+
+.card,
+.container,
+.row {
+  pointer-events: auto;
+}
