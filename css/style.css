@@ -98,6 +98,35 @@
         margin-top: 8px;
         border-top: 1px solid var(--bs-light);
     }
+
+    /* Contact form layout tweaks */
+    /* Keeps the form centered and prevents inputs from appearing too stretched */
+    section.container > .row > .col-12.col-md-10.col-lg-8 {
+        margin: 0 auto;
+    }
+
+    /* Slightly larger input paddings and consistent radius */
+    section.container .form-control {
+        padding: 0.85rem 0.9rem;
+        border-radius: 8px;
+    }
+
+    /* Make the country code small and aligned */
+    .input-group input#countryCode {
+        max-width: 95px;
+        text-align: center;
+    }
+
+    /* Button styling stays consistent but slightly larger on desktop */
+    .btn-outline-primary.py-3 {
+        border-radius: 10px;
+    }
+
+    @media (min-width: 992px) {
+        section.container > .row > .col-12.col-md-10.col-lg-8 {
+            max-width: 820px;
+        }
+    }
 }
 
 @media (min-width: 992px) {
