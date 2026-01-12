@@ -94,128 +94,66 @@
 
 
 
+<!-- CONTACT FORM (NEW CLEAN VERSION) -->
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
 
-  <!-- Contact Start -->
-  <div class="container-fluid py-5">
-    <div class="container py-5">
-      <div class="row g-5">
+      <div class="mb-4 text-center">
+        <h2 class="text-white">Book an Appointment</h2>
+        <p class="text-muted">Worldwide Medical Center – Dubai</p>
+      </div>
 
-        <!-- CONTACT DETAILS -->
-        <div class="col-lg-6">
-          <div class="title wow fadeInUp" data-wow-delay="0.1s">
-            <div class="title-left">
-              <h5 class="text-uppercase text-primary">Contact</h5>
-              <h1 class="text-white">Worldwide Medical Center</h1>
-            </div>
-          </div>
-
-          <p class="mb-4 text-white">
-            Get in touch with Worldwide Medical Center in Dubai to book appointments
-            for laser hair removal, body sculpting, cosmetic treatments, and medical consultations.
-          </p>
-
-          <table class="table table-dark mb-0 wow fadeInUp" data-wow-delay="0.3s">
-            <tr>
-              <td class="text-white">PHONE</td>
-              <td>
-                <a href="tel:+97143230261" class="text-primary fw-bold">
-                  +971 4 323 0261
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td class="text-white">E-MAIL</td>
-              <td>
-                <a href="mailto:info@wmc.clinic" class="text-primary fw-bold">
-                  info@wmc.clinic
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td class="text-white">ADDRESS</td>
-              <td class="text-white">
-                WMC Polyclinic LLC, 310 Garhoud Community,<br>
-                Near DXB International Airport T-1,<br>
-                Dubai – 29086, UAE
-              </td>
-            </tr>
-            <tr class="border-dark">
-              <td class="text-white">FOLLOW US</td>
-              <td>
-                <a class="me-3 text-primary" href="#"><i class="fab fa-facebook-f"></i></a>
-                <a class="me-3 text-primary" href="#"><i class="fab fa-linkedin-in"></i></a>
-                <a class="me-3 text-primary" href="#"><i class="fab fa-instagram"></i></a>
-              </td>
-            </tr>
-          </table>
+      <div class="card bg-dark border-secondary p-4">
+        <div class="mb-3">
+          <input type="text" id="name" class="form-control" placeholder="Your Name">
         </div>
 
-        <!-- CONTACT FORM -->
-        <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.5s">
-<form id="contactForm">
-  <div class="row g-3">
-
-    <div class="col-md-6">
-      <div class="form-floating">
-        <input type="text" class="form-control" id="name" required>
-        <label>Your Name</label>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="form-floating">
-        <input type="email" class="form-control" id="email" required>
-        <label>Your Email</label>
-      </div>
-    </div>
-
-    <div class="col-12">
-      <input type="tel" id="phone" class="form-control" placeholder="Phone Number" required>
-    </div>
-
-    <div class="col-12">
-      <div class="form-floating">
-        <select class="form-control" id="service" required>
-          <option value="">Select a Service</option>
-          <option>Aesthetic Treatments</option>
-          <option>General Practitioner</option>
-          <option>Pediatrics</option>
-          <option>Urology Services</option>
-        </select>
-        <label>Service</label>
-      </div>
-    </div>
-
-    <div class="col-12">
-      <div class="form-floating">
-        <textarea class="form-control" id="message" style="height:150px" required></textarea>
-        <label>Message</label>
-      </div>
-    </div>
-
-    <div class="col-12">
-      <button type="submit" class="btn btn-outline-primary border-2 w-100 py-3">
-        Book Appointment
-      </button>
-    </div>
-
-  </div>
-</form>
+        <div class="mb-3">
+          <input type="email" id="email" class="form-control" placeholder="Your Email">
         </div>
 
+        <div class="mb-3">
+          <input type="tel" id="phone" class="form-control" placeholder="Phone Number">
+        </div>
+
+        <div class="mb-3">
+          <select id="service" class="form-control">
+            <option value="">Select Service</option>
+            <option>Laser Hair Removal</option>
+            <option>Body Sculpting</option>
+            <option>Cosmetic Treatments</option>
+            <option>General Practitioner</option>
+            <option>Pediatrics</option>
+            <option>Urology Services</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <textarea id="message" class="form-control" rows="4" placeholder="Your Message"></textarea>
+        </div>
+
+        <button id="submitBtn" class="btn btn-outline-primary w-100">
+          Book Appointment
+        </button>
       </div>
+
     </div>
   </div>
-  <!-- Contact End -->
+</div>
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/css/intlTelInput.css">
 
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/intlTelInput.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
+
+
 <script>
-window.addEventListener("load", async () => {
+(async () => {
 
   /* =====================
      SUPABASE INIT
@@ -226,31 +164,29 @@ window.addEventListener("load", async () => {
   );
 
   /* =====================
-     PHONE INPUT (AUTO GEO)
+     COUNTRY BY IP
   ===================== */
-  let countryConfirmed = "ae";
-
+  let country = "ae";
   try {
     const res = await fetch("https://ipapi.co/json/");
     const data = await res.json();
-    if (data.country_code) {
-      countryConfirmed = data.country_code.toLowerCase();
-    }
-  } catch {}
+    if (data.country_code) country = data.country_code.toLowerCase();
+  } catch (e) {}
 
+  /* =====================
+     PHONE INPUT
+  ===================== */
   const phoneInput = document.getElementById("phone");
-
   const iti = window.intlTelInput(phoneInput, {
-    initialCountry: countryConfirmed,
+    initialCountry: country,
     separateDialCode: true,
     nationalMode: false,
-    preferredCountries: ["ae", "in", "gb", "us"],
     utilsScript:
       "https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"
   });
 
   /* =====================
-     BUTTON CLICK (NO RELOAD)
+     SUBMIT BUTTON
   ===================== */
   document.getElementById("submitBtn").addEventListener("click", async () => {
 
@@ -258,10 +194,14 @@ window.addEventListener("load", async () => {
     const email = document.getElementById("email").value.trim();
     const service = document.getElementById("service").value;
     const message = document.getElementById("message").value.trim();
-    const phone = iti.getNumber();
 
-    if (!name || !email || !service || !message || !iti.isValidNumber()) {
-      alert("❌ Please fill all fields correctly.");
+    if (!name || !email || !service || !message) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    if (!iti.isValidNumber()) {
+      alert("Please enter a valid phone number");
       return;
     }
 
@@ -270,23 +210,27 @@ window.addEventListener("load", async () => {
       .insert([{
         name,
         email,
-        phone,
+        phone: iti.getNumber(),
         service,
         message
       }]);
 
     if (error) {
       console.error(error);
-      alert("❌ Submission failed.");
+      alert("Submission failed");
       return;
     }
 
-    alert("✅ Appointment booked successfully!");
-    document.getElementById("contactForm").reset();
-    iti.setCountry(countryConfirmed);
+    alert("Appointment booked successfully!");
+    document.getElementById("name").value = "";
+    document.getElementById("email").value = "";
+    document.getElementById("message").value = "";
+    document.getElementById("service").value = "";
+    phoneInput.value = "";
+    iti.setCountry(country);
   });
 
-});
+})();
 </script>
 
 
@@ -444,17 +388,17 @@ window.addEventListener("load", async () => {
         <!-- Contact Us -->
         <div class="col-lg-4 col-md-6">
           <h5 class="text-primary mb-4">Contact Us</h5>
-          <p class="mb-2">
-            <i class="fa fa-map-marker-alt text-primary me-2"></i>
-            WMC Polyclinic LLC<br>310, 3rd Floor,<br>Garhoud Community, Dubai Autism Center,<br>Al Garhoud, Dubai (U.A.E.)
-          </p>
+          <div class="mb-2 d-flex align-items-start">
+            <i class="fa fa-map-marker-alt text-primary me-2 mt-1" style="flex-shrink: 0;"></i>
+            <span>WMC Polyclinic LLC<br>310, 3rd Floor,<br>Garhoud Community, Dubai Autism Center,<br>Al Garhoud, Dubai (U.A.E.)</span>
+          </div>
           <p class="mb-2">
             <i class="fa fa-phone-alt text-primary me-2"></i>
             <a href="tel:+97143230261" class="text-light">+971 4 323 0261</a>
           </p>
           <p class="mb-2">
             <i class="fa fa-envelope text-primary me-2"></i>
-            <a href="mailto:info@wmc-health.com" class="text-light">info@wmc-health.com</a>
+            <a href="mailto:info@wmc.clinic" class="text-light">info@wmc.clinic</a>
           </p>
           <p class="mb-0">
             <i class="fa fa-clock text-primary me-2"></i>
